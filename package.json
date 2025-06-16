@@ -1,0 +1,20 @@
+{
+  "name": "1gyouyouyaku3",
+  "version": "1.0.0",
+  "description": "URL を貼り付けるだけで、ページ内容を 60 文字以内・1 行で日本語要約してくれるツールです。記事を開く時間がないときの “短時間キャッチアップ” をお手伝いします。",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@mozilla/readability": "^0.6.0",
+    "axios": "^1.10.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
+  }
+}
