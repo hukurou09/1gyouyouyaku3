@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1行サマリー</title>
+    <meta name="description" content="URL を貼り付けるだけで、ページ内容を 60 文字以内・1 行で 日本語要約してくれるツールです。記事を開く時間がないときの “短時間キャッチアップ” をお手伝いします。">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔗</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <h1><span class="icon">🔗</span> 1行サマリー : URL を貼って → 要約</h1>
+        
+        <div class="input-group">
+            <label for="urlInput">URL</label>
+            <input type="text" id="urlInput" name="urlInput" placeholder="https://example.com/article..." fullWidth>
+        </div>
+        
+        <button id="summarizeButton" icon="lightning">
+            <span class="button-icon">⚡</span> 要約する
+        </button>
+        
+        <hr class="divider">
+        
+        <div id="summaryCard" class="card" style="display: none;">
+            <h2>要約結果</h2>
+            <p id="summaryOutput"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
