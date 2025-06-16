@@ -1,4 +1,43 @@
-require('dotenv').config(); // .envファイルから環境変数を読み込む
+const fs = require('fs');
+const path = require('path'); // pathモジュールをインポート
+
+// --- .envファイルの手動読み込みと環境変数設定 ---
+const envPath = path.resolve(process.cwd(), '.env'); // ここを process.cwd() 基準に変更
+let geminiApiKeyFromFile = null;
+
+try {
+    if (fs.existsSync(envPath)) {
+        console.log(`[手動読み込み] .env ファイルパス: ${envPath} - 存在確認OK`);
+        const envFileContent = fs.readFileSync(envPath, { encoding: 'utf8' });
+        console.log("[手動読み込み] .env ファイル内容:\n", envFileContent); // 内容を全部表示
+        const lines = envFileContent.split(/\r?\n/); // WindowsとUnix系の改行に対応
+        for (const line of lines) {
+            const trimmedLine = line.trim();
+            if (trimmedLine && !trimmedLine.startsWith('#')) { // コメント行と空行をスキップ
+                const parts = trimmedLine.split('=');
+                if (parts.length >= 2) { // 値に'='が含まれる場合も考慮
+                    const key = parts.shift().trim();
+                    const value = parts.join('=').trim();
+                    if (key === 'GEMINI_API_KEY') {
+                        process.env[key] = value; // process.envに設定
+                        geminiApiKeyFromFile = value; // 確認用変数にも代入
+                        console.log(`[手動読み込み] ${key} を process.env に設定しました。値: ${value}`);
+                        break; // GEMINI_API_KEYが見つかったらループを抜ける
+                    }
+                }
+            }
+        }
+        if (!geminiApiKeyFromFile) {
+            console.log("[手動読み込み] .envファイル内に GEMINI_API_KEY が見つかりませんでした。");
+        }
+    } else {
+        console.log(`[手動読み込み] .env ファイルが見つかりません: ${envPath}`);
+    }
+} catch (err) {
+    console.error("[手動読み込み] .env ファイル読み込み中にエラーが発生しました:", err);
+}
+// --- 手動読み込みここまで ---
+
 const express = require('express');
 const axios = require('axios');
 const { Readability } = require('@mozilla/readability');
@@ -9,10 +48,13 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Gemini APIの初期化
-const geminiApiKey = process.env.GEMINI_API_KEY;
+const geminiApiKey = process.env.GEMINI_API_KEY; // 手動設定されたものを読み込む
 if (!geminiApiKey) {
-    console.error("エラー: GEMINI_API_KEYが.envファイルに設定されていません。");
-    process.exit(1); // APIキーがない場合はサーバーを起動しない
+    // このエラーメッセージは、手動読み込みが失敗した場合にのみ表示されるはず
+    console.error("エラー: GEMINI_API_KEYが環境変数に設定されていません。(手動読み込み後)");
+    process.exit(1);
+} else {
+    console.log("GEMINI_API_KEY が正常に設定されました。");
 }
 const genAI = new GoogleGenerativeAI(geminiApiKey);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" }); // モデル名を指定
